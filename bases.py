@@ -52,6 +52,7 @@ def encode(number, base):
         # prepend the appropriate digit into a string of the numbers
         num_str = hexatri_string[round(dec*base)] + num_str
 
+    # return the number in the corresponding base
     return num_str
 
 def convert(digits, base1, base2):
@@ -64,6 +65,9 @@ def convert(digits, base1, base2):
     assert 2 <= base1 <= 36, 'base1 is out of range: {}'.format(base1)
     assert 2 <= base2 <= 36, 'base2 is out of range: {}'.format(base2)
 
+    # check if the given number is base 10,
+    # if it is, encode the number to the requested base
+    # else, decode the number into base 10 then encode into the requested base
     if base1 == 10:
         return encode(int(digits), base2)
     else:
@@ -87,4 +91,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    print(encode(42, 2))
