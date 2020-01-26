@@ -9,22 +9,27 @@ def decode(digits, base):
     return: int -- integer representation of number (in base 10)"""
     # Handle up to base 36 [0-9a-z]
     assert 2 <= base <= 36, 'base is out of range: {}'.format(base)
-
+    if digits[0] == '-':
+        neg = True
+        digits.pop()
     dec_num = 0
-    # initialize variable to store the max exponent the base is going to use. 
+    # initialize variable to store the max exponent the base is going to use.
     max_expo = len(digits) - 1
     # store all the digits to be used, up to hexatridecimal (base32).
     # stored as a list, the index of the digit used in the array is the value in decimal
     hexatri_string = string.digits + string.ascii_lowercase
     # iterate through the string of digits (where all letters are lowercased)
     for digit in digits.lower():
-        # incrememnt a variable storing the value of the decimal number with the index multiplied by the 
-        # base to the power of the corresponding exponent
+        # incrememnt a variable storing the value of the decimal number with the index multiplied by
+        # the base to the power of the corresponding exponent
         dec_num += hexatri_string.index(digit) * (base ** max_expo)
         # decrement the exponent by one
         max_expo -= 1
 
     # return the decimal number
+    if neg:
+        return -dec_num
+
     return dec_num
 
 def encode(number, base):
@@ -35,7 +40,11 @@ def encode(number, base):
     # Handle up to base 36 [0-9a-z]
     assert 2 <= base <= 36, 'base is out of range: {}'.format(base)
     # Handle unsigned numbers only for now
-    assert number >= 0, 'number is negative: {}'.format(number)
+    # assert number >= 0, 'number is negative: {}'.format(number)
+
+    if num < 0:
+        neg = True
+        num = -num
 
     num_str = ''
     # store all the digits to be used, up to hexatridecimal (base32).
@@ -44,7 +53,7 @@ def encode(number, base):
 
     # while loop: check while the number does not equal 0
     while number != 0:
-        # using python math module modf store the decimal, and the whole number from the original 
+        # using python math module modf store the decimal, and the whole number from the original
         # number divided by the base. i.e. 19.8  dec = .8, whole = 19
         dec, whole = modf(number/base)
         # reasign the number variable
@@ -53,6 +62,9 @@ def encode(number, base):
         num_str = hexatri_string[round(dec*base)] + num_str
 
     # return the number in the corresponding base
+    if neg:
+        return '-' + num_str
+
     return num_str
 
 def convert(digits, base1, base2):
@@ -70,9 +82,9 @@ def convert(digits, base1, base2):
     # else, decode the number into base 10 then encode into the requested base
     if base1 == 10:
         return encode(int(digits), base2)
-    else:
-        dec_digits = decode(digits, base1)
-        return str(encode(int(dec_digits), base2))
+
+    dec_digits = decode(digits, base1)
+    return str(encode(int(dec_digits), base2))
 
 def main():
     """Read command-line arguments and convert given digits between bases."""
