@@ -37,17 +37,22 @@ def encode(number, base):
     # Handle unsigned numbers only for now
     assert number >= 0, 'number is negative: {}'.format(number)
 
+    num_str = ''
+    # store all the digits to be used, up to hexatridecimal (base32).
+    # stored as a list, the index of the digit used in the array is the value in decimal
     hexatri_string = string.digits + string.ascii_lowercase
-    rem_arr = []
+
+    # while loop: check while the number does not equal 0
     while number != 0:
+        # using python math module modf store the decimal, and the whole number from the original 
+        # number divided by the base. i.e. 19.8  dec = .8, whole = 19
         dec, whole = modf(number/base)
-        rem_arr = [round(dec*base)] + rem_arr
+        # reasign the number variable
         number = whole
+        # prepend the appropriate digit into a string of the numbers
+        num_str = hexatri_string[round(dec*base)] + num_str
 
-    for i, num in enumerate(rem_arr):
-        rem_arr[i] = hexatri_string[int(num)]
-
-    return ''.join(rem_arr)
+    return num_str
 
 def convert(digits, base1, base2):
     """Convert given digits in base1 to digits in base2.
@@ -82,3 +87,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print(encode(42, 2))
