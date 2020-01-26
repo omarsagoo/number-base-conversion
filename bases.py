@@ -12,7 +12,7 @@ def decode(digits, base):
 
     if digits[0] == '-':
         neg = True
-        digits.pop()
+        digits = digits[1:]
     else:
         neg = False
 
