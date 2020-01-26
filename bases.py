@@ -10,13 +10,21 @@ def decode(digits, base):
     # Handle up to base 36 [0-9a-z]
     assert 2 <= base <= 36, 'base is out of range: {}'.format(base)
 
-    len_of_num = len(digits) - 1
     dec_num = 0
+    # initialize variable to store the max exponent the base is going to use. 
+    max_expo = len(digits) - 1
+    # store all the digits to be used, up to hexatridecimal (base32).
+    # stored as a list, the index of the digit used in the array is the value in decimal
     hexatri_string = string.digits + string.ascii_lowercase
+    # iterate through the string of digits (where all letters are lowercased)
     for digit in digits.lower():
-        dec_num += hexatri_string.index(digit) * (base ** len_of_num)
-        len_of_num -= 1
+        # incrememnt a variable storing the value of the decimal number with the index multiplied by the 
+        # base to the power of the corresponding exponent
+        dec_num += hexatri_string.index(digit) * (base ** max_expo)
+        # decrement the exponent by one
+        max_expo -= 1
 
+    # return the decimal number
     return dec_num
 
 def encode(number, base):
@@ -74,4 +82,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
