@@ -9,9 +9,13 @@ def decode(digits, base):
     return: int -- integer representation of number (in base 10)"""
     # Handle up to base 36 [0-9a-z]
     assert 2 <= base <= 36, 'base is out of range: {}'.format(base)
+
     if digits[0] == '-':
         neg = True
         digits.pop()
+    else:
+        neg = False
+
     dec_num = 0
     # initialize variable to store the max exponent the base is going to use.
     max_expo = len(digits) - 1
@@ -42,9 +46,11 @@ def encode(number, base):
     # Handle unsigned numbers only for now
     # assert number >= 0, 'number is negative: {}'.format(number)
 
-    if num < 0:
+    if number < 0:
         neg = True
-        num = -num
+        number = -number
+    else:
+        neg = False
 
     num_str = ''
     # store all the digits to be used, up to hexatridecimal (base32).
