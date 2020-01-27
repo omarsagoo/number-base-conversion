@@ -2,6 +2,14 @@ from math import modf
 import string
 
 
+# store all the digits to be used, up to hexatridecimal (base32).
+# stored as a list, the index of the digit used in the array is the value in decimal
+HEXATRI_LIST = string.digits + string.ascii_lowercase
+# create a dictionary that stores all the digits and their values,
+# much faster than repeated iteration through a list, inspiration from Kevin Meyers
+VAL_DICT = {digit: val for val, digit in enumerate(HEXATRI_LIST)}
+
+
 def decode(digits, base):
     """Decode given digits in given base to number in base 10.
     digits: str -- string representation of number (in given base)
@@ -10,30 +18,18 @@ def decode(digits, base):
     # Handle up to base 36 [0-9a-z]
     assert 2 <= base <= 36, 'base is out of range: {}'.format(base)
 
+    neg = False
     if digits[0] == '-':
         neg = True
         digits = digits[1:]
-    else:
-        neg = False
 
     dec_num = 0
-    # initialize variable to store the max exponent the base is going to use.
-    max_expo = len(digits) - 1
-    # store all the digits to be used, up to hexatridecimal (base32).
-    # stored as a list, the index of the digit used in the array is the value in decimal
-    hexatri_string = string.digits + string.ascii_lowercase
-    # iterate through the string of digits (where all letters are lowercased)
-    for digit in digits.lower():
-        # incrememnt a variable storing the value of the decimal number with the index multiplied by
-        # the base to the power of the corresponding exponent
-        dec_num += hexatri_string.index(digit) * (base ** max_expo)
-        # decrement the exponent by one
-        max_expo -= 1
 
-    # return the decimal number
+    for i, digit in enumerate(reversed(digits)):
+        dec_num += VAL_DICT[digit] * (base ** i)
+
     if neg:
         return -dec_num
-
     return dec_num
 
 def encode(number, base):
@@ -46,26 +42,25 @@ def encode(number, base):
     # Handle unsigned numbers only for now
     # assert number >= 0, 'number is negative: {}'.format(number)
 
+    neg = False
     if number < 0:
         neg = True
         number = -number
-    else:
-        neg = False
 
     num_str = ''
-    # store all the digits to be used, up to hexatridecimal (base32).
-    # stored as a list, the index of the digit used in the array is the value in decimal
-    hexatri_string = string.digits + string.ascii_lowercase
 
     # while loop: check while the number does not equal 0
     while number != 0:
         # using python math module modf store the decimal, and the whole number from the original
         # number divided by the base. i.e. 19.8  dec = .8, whole = 19
-        dec, whole = modf(number/base)
+        # dec, whole = modf(number/base)
+
+        whole, dec = divmod(number, base)
+
         # reasign the number variable
         number = whole
         # prepend the appropriate digit into a string of the numbers
-        num_str = hexatri_string[round(dec*base)] + num_str
+        num_str = HEXATRI_LIST[dec] + num_str
 
     # return the number in the corresponding base
     if neg:
